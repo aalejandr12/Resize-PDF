@@ -388,15 +388,15 @@ analysis = resizer.analyze_image_widths(image_data_list)
 analysis
             `;
             
-            const analysis = this.pyodide.runPython(pythonCode);
-            
+            let analysis = this.pyodide.runPython(pythonCode);
             console.log('📊 Análisis Python resultado:', analysis);
-            
             if (!analysis) {
                 throw new Error('Error en el análisis Python');
             }
-            
-            // Convertir a formato JavaScript
+            // Convertir a objeto JS plano si es PyProxy
+            if (typeof analysis.toJs === 'function') {
+                analysis = analysis.toJs();
+            }
             const statistics = {
                 target_width: analysis.target_width,
                 total_pages: analysis.total_pages,
@@ -405,9 +405,7 @@ analysis
                 width_distribution: analysis.width_distribution,
                 process_success: true
             };
-            
             console.log('📈 Estadísticas convertidas:', statistics);
-            
             return {
                 success: true,
                 statistics: statistics
