@@ -14,6 +14,7 @@ class PDFProcessor {
         this.pdfDoc = null;
         this.currentFile = null;
         this.isProcessing = false;
+        this.cachedImages = null; // Cache para imágenes convertidas
         this.setupPDFJS();
     }
 
@@ -69,6 +70,11 @@ class PDFProcessor {
             
             this.displayFileInfo(info);
             console.log('✅ PDF cargado:', info);
+            
+            // Iniciar análisis automáticamente después de cargar
+            setTimeout(() => {
+                this.startAnalysis();
+            }, 1000);
             
             return true;
             
@@ -213,24 +219,24 @@ result
             this.isProcessing = true;
             this.updateProgress(0, 'Iniciando procesamiento...');
             
-            // 1. Inicializar Pyodide
-            if (!await this.initializePyodide()) {
-                throw new Error('No se pudo inicializar Python');
+            // 1. Usar imágenes del cache si están disponibles
+            let imageDataList = this.cachedImages;
+            if (!imageDataList) {
+                // Si no hay cache, convertir PDF a imágenes
+                this.updateProgress(20, 'Convirtiendo PDF a imágenes...');
+                imageDataList = await this.convertPDFToImages();
+                this.cachedImages = imageDataList;
             }
             
-            // 2. Convertir PDF a imágenes
-            const imageDataList = await this.convertPDFToImages();
-            
-            // 3. Procesar con tu lógica Python
+            // 2. Procesar con tu lógica Python completa
+            this.updateProgress(50, 'Redimensionando con Python...');
             const result = await this.analyzeAndResizeWithPython(imageDataList, quality);
             
-            // 4. Mostrar análisis
-            this.displayAnalysisResults(result.statistics);
-            
-            // 5. Crear PDF final
+            // 3. Crear PDF final
+            this.updateProgress(80, 'Generando PDF final...');
             const pdfBytes = await this.createPDFFromImages(result.resized_images);
             
-            // 6. Preparar descarga
+            // 4. Preparar descarga
             this.preparePDFDownload(pdfBytes);
             
             this.updateProgress(100, '✅ Procesamiento completado!');
@@ -308,6 +314,73 @@ result
         
         document.getElementById('targetWidth').value = stats.target_width;
         document.getElementById('configSection').style.display = 'block';
+    }
+
+    async startAnalysis() {
+        try {
+            console.log('🔍 Iniciando análisis automático...');
+            this.updateProgress(0, 'Analizando páginas del PDF...');
+            
+            // 1. Inicializar Pyodide
+            this.updateProgress(10, 'Iniciando Python...');
+            if (!await this.initializePyodide()) {
+                throw new Error('No se pudo inicializar Python');
+            }
+            
+            // 2. Convertir PDF a imágenes y guardar en cache
+            this.updateProgress(40, 'Convirtiendo páginas a imágenes...');
+            this.cachedImages = await this.convertPDFToImages();
+            
+            // 3. Analizar con Python
+            this.updateProgress(70, 'Analizando anchos con Python...');
+            const result = await this.analyzeWithPython(this.cachedImages);
+            
+            // 4. Mostrar resultados
+            this.updateProgress(100, 'Análisis completado');
+            this.displayAnalysisResults(result.statistics);
+            
+            console.log('✅ Análisis automático completado');
+            
+        } catch (error) {
+            console.error('❌ Error en análisis:', error);
+            this.updateProgress(0, `Error: ${error.message}`);
+        }
+    }
+
+    async analyzeWithPython(imageDataList) {
+        if (!this.pyodide) {
+            throw new Error('Pyodide no inicializado');
+        }
+
+        try {
+            // Pasar datos a Python para análisis únicamente
+            this.pyodide.globals.set("image_data_list", imageDataList);
+            
+            // Solo hacer el análisis, no el redimensionado completo
+            const pythonCode = `
+# Crear instancia del analizador
+resizer = create_pdf_resizer()
+
+# Solo analizar anchos
+analysis = resizer.analyze_image_widths(image_data_list)
+analysis
+            `;
+            
+            const analysis = this.pyodide.runPython(pythonCode);
+            
+            if (!analysis) {
+                throw new Error('Error en el análisis Python');
+            }
+            
+            return {
+                success: true,
+                statistics: analysis
+            };
+            
+        } catch (error) {
+            console.error('❌ Error en análisis Python:', error);
+            throw error;
+        }
     }
 
     showResults() {
