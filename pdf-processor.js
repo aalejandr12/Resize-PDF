@@ -289,22 +289,37 @@ result
     }
 
     displayAnalysisResults(stats) {
+        console.log('📋 Mostrando resultados:', stats);
+        
+        if (!stats) {
+            console.error('❌ No hay estadísticas para mostrar');
+            return;
+        }
+        
         const resultsDiv = document.getElementById('analysisResults');
+        if (!resultsDiv) {
+            console.error('❌ No se encontró elemento analysisResults');
+            return;
+        }
+        
+        // Verificar que width_distribution existe
+        const widthDist = stats.width_distribution || {};
+        
         resultsDiv.innerHTML = `
             <div class="analysis-stats">
                 <div class="stat-item">
-                    <strong>Ancho objetivo:</strong> ${stats.target_width}px
+                    <strong>Ancho objetivo:</strong> ${stats.target_width || 'No detectado'}px
                 </div>
                 <div class="stat-item">
-                    <strong>Páginas a redimensionar:</strong> ${stats.pages_resized}
+                    <strong>Páginas a redimensionar:</strong> ${stats.pages_resized || 0}
                 </div>
                 <div class="stat-item">
-                    <strong>Páginas sin cambios:</strong> ${stats.pages_unchanged}
+                    <strong>Páginas sin cambios:</strong> ${stats.pages_unchanged || 0}
                 </div>
                 <div class="stat-item">
                     <strong>Distribución de anchos:</strong>
                     <div class="width-distribution">
-                        ${Object.entries(stats.width_distribution)
+                        ${Object.entries(widthDist)
                           .map(([width, count]) => `${width}px: ${count} páginas`)
                           .join('<br>')}
                     </div>
@@ -312,8 +327,15 @@ result
             </div>
         `;
         
-        document.getElementById('targetWidth').value = stats.target_width;
-        document.getElementById('configSection').style.display = 'block';
+        const targetWidthInput = document.getElementById('targetWidth');
+        if (targetWidthInput) {
+            targetWidthInput.value = stats.target_width || '';
+        }
+        
+        const configSection = document.getElementById('configSection');
+        if (configSection) {
+            configSection.style.display = 'block';
+        }
     }
 
     async startAnalysis() {
@@ -368,13 +390,27 @@ analysis
             
             const analysis = this.pyodide.runPython(pythonCode);
             
+            console.log('📊 Análisis Python resultado:', analysis);
+            
             if (!analysis) {
                 throw new Error('Error en el análisis Python');
             }
             
+            // Convertir a formato JavaScript
+            const statistics = {
+                target_width: analysis.target_width,
+                total_pages: analysis.total_pages,
+                pages_resized: analysis.pages_to_resize,
+                pages_unchanged: analysis.total_pages - analysis.pages_to_resize,
+                width_distribution: analysis.width_distribution,
+                process_success: true
+            };
+            
+            console.log('📈 Estadísticas convertidas:', statistics);
+            
             return {
                 success: true,
-                statistics: analysis
+                statistics: statistics
             };
             
         } catch (error) {
