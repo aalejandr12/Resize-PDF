@@ -106,7 +106,10 @@ async function loadPDF(file) {
         alert(`Error cargando PDF: ${error.message}`);
         resetUploadArea();
     } finally {
-        document.getElementById('pdfInput').disabled = false;
+        const pdfInput = document.getElementById('pdfInput');
+        if (pdfInput) {
+            pdfInput.disabled = false;
+        }
     }
 }
 
@@ -157,8 +160,11 @@ function resetAll() {
     document.getElementById('resultsSection').style.display = 'none';
     
     // Resetear input
-    document.getElementById('pdfInput').value = '';
-    document.getElementById('pdfInput').disabled = false;
+    const pdfInput = document.getElementById('pdfInput');
+    if (pdfInput) {
+        pdfInput.value = '';
+        pdfInput.disabled = false;
+    }
     
     // Resetear área de carga
     resetUploadArea();

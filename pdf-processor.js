@@ -269,11 +269,17 @@ result
     }
 
     displayFileInfo(info) {
-        document.getElementById('fileName').textContent = info.name;
-        document.getElementById('fileSize').textContent = info.size;
-        document.getElementById('pageCount').textContent = info.pageCount;
-        document.getElementById('fileInfo').style.display = 'block';
-        document.getElementById('analysisSection').style.display = 'block';
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const pageCount = document.getElementById('pageCount');
+        const fileInfo = document.getElementById('fileInfo');
+        const analysisSection = document.getElementById('analysisSection');
+        
+        if (fileName) fileName.textContent = info.name;
+        if (fileSize) fileSize.textContent = info.size;
+        if (pageCount) pageCount.textContent = info.pageCount;
+        if (fileInfo) fileInfo.style.display = 'block';
+        if (analysisSection) analysisSection.style.display = 'block';
     }
 
     displayAnalysisResults(stats) {
