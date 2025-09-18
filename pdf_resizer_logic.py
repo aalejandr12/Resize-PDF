@@ -157,22 +157,28 @@ def resize_pdf_pages(image_data_list, quality=1.0):
     3. Redimensionar manteniendo proporción
     """
     resizer = create_pdf_resizer()
-    
+
     # Paso 1: Analizar anchos (tu lógica exacta)
     analysis = resizer.analyze_image_widths(image_data_list)
     if not analysis:
-        return None
-    
+        return {'success': False, 'error': 'No se pudo analizar los anchos'}
+
     # Paso 2: Redimensionar con ancho uniforme (tu algoritmo)
     resized_images = resizer.resize_images_uniform_width(
-        image_data_list, 
-        analysis['target_width'], 
+        image_data_list,
+        analysis['target_width'],
         quality
     )
-    
+
     # Paso 3: Generar estadísticas
     stats = resizer.get_statistics(analysis, resized_images)
-    
+
+    # Limpiar datos no serializables
+    for img in resized_images:
+        if 'original_size' in img:
+            # Convertir tupla a lista para Pyodide/JS
+            img['original_size'] = list(img['original_size'])
+
     return {
         'success': True,
         'resized_images': resized_images,

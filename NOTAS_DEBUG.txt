@@ -1,0 +1,20 @@
+# Cambios recientes para depuración de errores Python
+
+- Se agregó manejo de errores y logging detallado en `pdf-processor.js` para mostrar el mensaje real de error de Python y el traceback si ocurre una excepción.
+- Se aseguró que la función `resize_pdf_pages` en `pdf_resizer_logic.py` solo devuelva tipos serializables (listas, dicts, strings, ints) y nunca objetos PIL ni tuplas.
+- Si ocurre un error en Python, ahora se muestra el mensaje y el traceback en el navegador para depuración.
+
+**¿Qué hacer si sigue fallando?**
+- Copia y pega aquí el mensaje de error completo que aparece en el navegador (incluyendo el traceback de Python).
+- Así podremos identificar si el problema es de datos, memoria, o un bug en la lógica Python.
+
+---
+
+**¿Cómo probar?**
+1. Recarga la página y sube tu PDF.
+2. Si ocurre un error, copia el mensaje completo que aparece (incluye traceback Python).
+3. Si funciona, deberías ver el análisis y poder descargar el PDF redimensionado.
+
+---
+
+_Actualizado por GitHub Copilot, 2025-09-18_

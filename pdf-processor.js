@@ -139,26 +139,37 @@ class PDFProcessor {
         try {
             console.log('🧮 Ejecutando lógica Python de redimensionado...');
             this.updateProgress(80, 'Analizando anchos con Python...');
-            
+
             // Pasar datos a Python
             this.pyodide.globals.set("image_data_list", imageDataList);
             this.pyodide.globals.set("quality_factor", quality);
-            
+
             // Ejecutar tu lógica exacta
             const pythonCode = `
-result = resize_pdf_pages(image_data_list, quality_factor)
+import traceback
+try:
+    result = resize_pdf_pages(image_data_list, quality_factor)
+except Exception as e:
+    result = {'success': False, 'error': str(e), 'traceback': traceback.format_exc()}
 result
             `;
-            
-            const result = this.pyodide.runPython(pythonCode);
-            
-            if (!result || !result.success) {
-                throw new Error('Error en el procesamiento Python');
+
+            let result = this.pyodide.runPython(pythonCode);
+            // Si es PyProxy, convertir a objeto JS plano
+            if (result && typeof result.toJs === 'function') {
+                result = result.toJs();
             }
-            
+            console.log('🔎 Resultado Python:', result);
+            if (!result || !result.success) {
+                let errMsg = 'Error en el procesamiento Python';
+                if (result && result.error) {
+                    errMsg += `: ${result.error}\n${result.traceback || ''}`;
+                }
+                throw new Error(errMsg);
+            }
             console.log('✅ Procesamiento Python completado:', result.statistics);
             return result;
-            
+
         } catch (error) {
             console.error('❌ Error en procesamiento Python:', error);
             throw error;
