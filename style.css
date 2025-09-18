@@ -1,0 +1,465 @@
+/**
+ * 🎨 ESTILOS PARA PDF REDIMENSIONADOR
+ * ===================================
+ * 
+ * Diseño moderno y responsivo inspirado en aplicaciones web profesionales
+ */
+
+/* Reset y configuración base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    color: white;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+.description {
+    font-size: 0.95rem;
+    opacity: 0.8;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Main content */
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* Secciones generales */
+section {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+section h3 {
+    margin-bottom: 20px;
+    color: #444;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Área de carga */
+.upload-area {
+    border: 3px dashed #ddd;
+    border-radius: 15px;
+    padding: 60px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: #fafafa;
+}
+
+.upload-area:hover {
+    border-color: #667eea;
+    background: #f0f4ff;
+    transform: translateY(-2px);
+}
+
+.upload-area.drag-over {
+    border-color: #667eea;
+    background: #e8f0ff;
+    transform: scale(1.02);
+}
+
+.upload-area.loading {
+    border-color: #ffa726;
+    background: #fff8e1;
+    cursor: wait;
+}
+
+.upload-area.success {
+    border-color: #4caf50;
+    background: #e8f5e8;
+    cursor: default;
+}
+
+.upload-content .upload-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.upload-content h3 {
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.upload-content p {
+    color: #777;
+    margin-bottom: 20px;
+}
+
+/* Botones */
+.btn-upload, .btn-primary, .btn-secondary, .btn-download {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-upload {
+    background: #667eea;
+    color: white;
+}
+
+.btn-upload:hover {
+    background: #5a6fd8;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    font-size: 1.1rem;
+    padding: 15px 40px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+.btn-download {
+    background: linear-gradient(135deg, #4caf50, #45a049);
+    color: white;
+    font-size: 1.2rem;
+    padding: 18px 50px;
+}
+
+.btn-download:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+}
+
+/* Información del archivo */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.info-item {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.info-item strong {
+    display: block;
+    color: #444;
+    margin-bottom: 5px;
+}
+
+/* Barra de progreso */
+.progress-bar {
+    background: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 30px;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.progress-fill {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 10px;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #333;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Resultados del análisis */
+.analysis-results {
+    margin-top: 20px;
+}
+
+.analysis-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.stat-item {
+    padding: 15px;
+    background: #f0f4ff;
+    border-radius: 8px;
+    border: 1px solid #e0e7ff;
+}
+
+.stat-item strong {
+    color: #4c51bf;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.width-distribution {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #666;
+    margin-top: 8px;
+}
+
+/* Configuración */
+.config-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.config-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.config-item label {
+    font-weight: 600;
+    color: #444;
+}
+
+.config-item input[type="number"] {
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #f8f9fa;
+}
+
+.config-item input[type="range"] {
+    -webkit-appearance: none;
+    height: 8px;
+    border-radius: 4px;
+    background: #ddd;
+    outline: none;
+}
+
+.config-item input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.config-note {
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+}
+
+.config-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Resultados */
+.results-content {
+    text-align: center;
+}
+
+.result-info {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #e8f5e8;
+    border-radius: 10px;
+    border: 1px solid #c8e6c9;
+}
+
+.result-info p {
+    margin-bottom: 10px;
+    color: #2e7d32;
+}
+
+.download-area {
+    margin-top: 30px;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px;
+    color: white;
+    opacity: 0.8;
+}
+
+footer p {
+    margin-bottom: 5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .upload-area {
+        padding: 40px 15px;
+    }
+    
+    section {
+        padding: 20px;
+    }
+    
+    .config-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .analysis-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+section {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Estados especiales */
+.hidden {
+    display: none !important;
+}
+
+.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Tooltips y ayuda */
+.help-text {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 5px;
+    line-height: 1.4;
+}
+
+/* Mejoras visuales adicionales */
+.section-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}
+
+.success-checkmark {
+    color: #4caf50;
+    font-size: 1.2rem;
+    margin-right: 8px;
+}
+
+.error-icon {
+    color: #f44336;
+    font-size: 1.2rem;
+    margin-right: 8px;
+}

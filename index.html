@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Redimensionador de PDFs - Ancho Uniforme</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔧 Redimensionador de PDFs</h1>
+            <p class="subtitle">Uniformiza el ancho de todas las páginas de tu PDF</p>
+            <p class="description">
+                Basado en la lógica del <strong>EdgeMangaDownloader</strong> - 
+                Encuentra el ancho más común y redimensiona todas las páginas
+            </p>
+        </header>
+
+        <main>
+            <!-- Sección de carga de archivo -->
+            <section class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <div class="upload-icon">📄</div>
+                        <h3>Arrastra tu PDF aquí</h3>
+                        <p>o haz clic para seleccionar</p>
+                        <input type="file" id="pdfInput" accept=".pdf" hidden>
+                        <button class="btn-upload" onclick="document.getElementById('pdfInput').click()">
+                            Seleccionar PDF
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Información del archivo -->
+            <section class="file-info" id="fileInfo" style="display: none;">
+                <h3>📋 Información del archivo</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Nombre:</strong>
+                        <span id="fileName"></span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Tamaño:</strong>
+                        <span id="fileSize"></span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Páginas:</strong>
+                        <span id="pageCount"></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Análisis de páginas -->
+            <section class="analysis-section" id="analysisSection" style="display: none;">
+                <h3>🔍 Análisis de páginas</h3>
+                <div class="analysis-content">
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress-fill" id="progressFill"></div>
+                        <span class="progress-text" id="progressText">Iniciando análisis...</span>
+                    </div>
+                    <div class="analysis-results" id="analysisResults">
+                        <!-- Resultados del análisis se mostrarán aquí -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Configuración de redimensionado -->
+            <section class="config-section" id="configSection" style="display: none;">
+                <h3>⚙️ Configuración de redimensionado</h3>
+                <div class="config-content">
+                    <div class="config-item">
+                        <label for="targetWidth">Ancho objetivo (px):</label>
+                        <input type="number" id="targetWidth" readonly>
+                        <span class="config-note">Ancho más común detectado automáticamente</span>
+                    </div>
+                    <div class="config-item">
+                        <label for="qualitySlider">Calidad de imagen:</label>
+                        <input type="range" id="qualitySlider" min="0.5" max="2.0" step="0.1" value="1.0">
+                        <span id="qualityValue">1.0x</span>
+                    </div>
+                    <div class="config-actions">
+                        <button class="btn-primary" id="processBtn" onclick="processPDF()">
+                            🚀 Procesar PDF
+                        </button>
+                        <button class="btn-secondary" onclick="resetAll()">
+                            🔄 Reiniciar
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Resultados -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <h3>✅ Resultado</h3>
+                <div class="results-content">
+                    <div class="result-info">
+                        <p><strong>PDF procesado exitosamente!</strong></p>
+                        <p>Todas las páginas ahora tienen el mismo ancho.</p>
+                    </div>
+                    <div class="download-area">
+                        <button class="btn-download" id="downloadBtn">
+                            📥 Descargar PDF Redimensionado
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>🌟 Inspirado en EdgeMangaDownloader - Lógica de redimensionado inteligente</p>
+            <p>💻 Funciona completamente en tu navegador - No se suben archivos a servidores</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="pdf-processor.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
